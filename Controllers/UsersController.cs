@@ -52,7 +52,7 @@ namespace JWTAuthenticationRestAPI.Controllers
             var is_there = _context.Users.Where(u => u.email == userf.email).Any();
             if(is_there)
             {
-                return "email already registered please use anothee email and try again";
+                return "email already registered please use anothre email and try again";
             }
              is_there = _context.Users.Where(u => u.username == userf.username).Any();
             if (is_there)
@@ -65,7 +65,7 @@ namespace JWTAuthenticationRestAPI.Controllers
             {
                 return "added successfully";
             }
-            return "unable to add user  to database";
+            return "unable to add user to database please try again";
         }
 
         // PUT api/<ValuesController>/5
@@ -76,8 +76,21 @@ namespace JWTAuthenticationRestAPI.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public Object Delete(long id)
         {
+            var user = _context.Users.Find(id);
+            if (user == null)
+            {
+                return "No user found with given ID";
+            }
+            _context.Users.Remove(user);
+            if (_context.SaveChanges() > 0)
+            {
+                return "User with given ID successfully deleted ";
+            }
+            return "Unable to  delete  User try again ";
+
+
         }
     }
 }
