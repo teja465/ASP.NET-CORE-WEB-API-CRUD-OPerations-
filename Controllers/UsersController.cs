@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JWTAuthenticationRestAPI.Models;
-using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -25,47 +22,63 @@ namespace JWTAuthenticationRestAPI.Controllers
         }
         // GET: api/<ValuesController>
         [HttpGet]
-        public Object Get()
+        public IActionResult Get()
         {
+            
             var users = _context.Users.ToList<User>();
             _context.SaveChanges();
-            var jsonResponse = JsonConvert.SerializeObject(users);
-
-            return jsonResponse;
+            // var jsonResponse = JsonConvert.SerializeObject(users);
+            return  new JsonResult(users);
         }
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(long id)
         {
-            return "value";
+           if(id<=0){
+               Response.StatusCode=404;
+               return new JsonResult("Invalid user id");
+           }
+           var user = _context.Users.Find(id);
+           if (user ==null) {
+               Response.StatusCode=404;
+               return new JsonResult("User with given ID not found may be deleted :)");
+           }
+           return  new JsonResult(user);
         }
 
         // POST api/<ValuesController>
         [HttpPost]
-        public string Post([FromBody] User userf)
+        public IActionResult Post([FromBody] User userf)
         {
             if (userf.city == null || userf.email == null || userf.password == null || userf.username == null) 
             { 
-                return "city,email,password & username  cant be NULL";
+                Response.StatusCode=400;
+                return  new JsonResult("city,email,password & username  cant be NULL");
+            }
+            if (userf.city == "" || userf.email == "" || userf.password == "" || userf.username == "") 
+            { 
+                Response.StatusCode=400;
+                return  new JsonResult("city,email,password & username  cant be EMPTY ");
             }
             var is_there = _context.Users.Where(u => u.email == userf.email).Any();
             if(is_there)
             {
-                return "email already registered please use anothre email and try again";
+                return  new JsonResult("email already registered please use anothre email and try again");
             }
              is_there = _context.Users.Where(u => u.username == userf.username).Any();
             if (is_there)
             {
-                return "Username  already registered please use another username and  try again";
+                return  new JsonResult("Username  already registered please use another username and  try again");
             }
             _context.Users.Add(userf);
             var resp = _context.SaveChanges();
             if(resp > 0)
             {
-                return "added successfully";
+                return new JsonResult("added successfully");
             }
-            return "unable to add user to database please try again";
+            Response.StatusCode=404;
+            return new JsonResult("unable to add user to database please try again");
         }
 
         // PUT api/<ValuesController>/5
@@ -81,6 +94,7 @@ namespace JWTAuthenticationRestAPI.Controllers
             var user = _context.Users.Find(id);
             if (user == null)
             {
+                Response.StatusCode=404;
                 return "No user found with given ID";
             }
             _context.Users.Remove(user);
