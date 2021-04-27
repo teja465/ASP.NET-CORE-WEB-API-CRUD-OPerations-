@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\devp\\csharp\\core\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI.csproj": {}
+    "E:\\work\\ASP.NET-CORE-WEB-API-CRUD-OPerations-\\JWTAuthenticationRestAPI.csproj": {}
   },
   "projects": {
-    "E:\\devp\\csharp\\core\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI.csproj": {
+    "E:\\work\\ASP.NET-CORE-WEB-API-CRUD-OPerations-\\JWTAuthenticationRestAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\devp\\csharp\\core\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI.csproj",
+        "projectUniqueName": "E:\\work\\ASP.NET-CORE-WEB-API-CRUD-OPerations-\\JWTAuthenticationRestAPI.csproj",
         "projectName": "JWTAuthenticationRestAPI",
-        "projectPath": "E:\\devp\\csharp\\core\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI.csproj",
+        "projectPath": "E:\\work\\ASP.NET-CORE-WEB-API-CRUD-OPerations-\\JWTAuthenticationRestAPI.csproj",
         "packagesPath": "C:\\Users\\sree\\.nuget\\packages\\",
-        "outputPath": "E:\\devp\\csharp\\core\\JWTAuthenticationRestAPI\\JWTAuthenticationRestAPI\\obj\\",
+        "outputPath": "E:\\work\\ASP.NET-CORE-WEB-API-CRUD-OPerations-\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sree\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,18 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "IdentityServer4.AccessTokenValidation": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.Core": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[5.0.5, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[5.0.5, )"

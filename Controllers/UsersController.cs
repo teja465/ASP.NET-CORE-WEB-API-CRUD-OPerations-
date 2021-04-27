@@ -1,24 +1,34 @@
 ﻿using JWTAuthenticationRestAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace JWTAuthenticationRestAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private static Context _context;
-        public UsersController( Context context)
+        private IConfiguration _config;
+        private IJWTAuthenticationManager _auth;
+
+        public UsersController( Context context, IConfiguration config, IJWTAuthenticationManager authenticationManager)
         {
             _context = context;
+            _config = config;
+            _auth = authenticationManager;
         }
         // GET: api/<ValuesController>
         [HttpGet]
@@ -32,19 +42,23 @@ namespace JWTAuthenticationRestAPI.Controllers
         }
 
         // GET api/<ValuesController>/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
-           if(id<=0){
-               Response.StatusCode=404;
-               return new JsonResult("Invalid user id");
-           }
-           var user = _context.Users.Find(id);
-           if (user ==null) {
-               Response.StatusCode=404;
-               return new JsonResult("User with given ID not found may be deleted :)");
-           }
-           return  new JsonResult(user);
+            //if(id<=0){
+            //    Response.StatusCode=404;
+            //    return new JsonResult("Invalid user id");
+            //}
+            //var user = _context.Users.Find(id);
+            //if (user ==null) {
+            //    Response.StatusCode=404;
+            //    return new JsonResult("User with given ID not found may be deleted :)");
+            //}
+            //return  new JsonResult(user);
+
+            var token = _auth.Authenticate("ravi", "Pass@123");
+            return new JsonResult( token);
         }
 
         // POST api/<ValuesController>
@@ -86,6 +100,7 @@ namespace JWTAuthenticationRestAPI.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
+        
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
@@ -103,8 +118,20 @@ namespace JWTAuthenticationRestAPI.Controllers
                 return "User with given ID successfully deleted ";
             }
             return "Unable to  delete  User try again ";
+        }
 
+        private string GenerateJSONWebToken()
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+              _config["Jwt:Issuer"],
+              null,
+              expires: DateTime.Now.AddMinutes(120),
+              signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
